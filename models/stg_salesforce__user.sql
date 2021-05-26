@@ -1,15 +1,17 @@
+{{ config(alias='stg_salesforce_user') }}
+
 with source as (
 
     select *
-    from {{ ref('stg_salesforce__user_tmp') }}
+    from {{ var('user') }}
 
 ), macro as (
 
     select
-        
+
         /*
-        The below macro is used to generate the correct SQL for package staging models. It takes a list of columns 
-        that are expected/needed (staging_columns from dbt_salesforce_source/models/tmp/) and compares it with columns 
+        The below macro is used to generate the correct SQL for package staging models. It takes a list of columns
+        that are expected/needed (staging_columns from dbt_salesforce_source/models/tmp/) and compares it with columns
         in the source (source_columns from dbt_salesforce_source/macros/).
 
         For more information refer to our dbt_fivetran_utils documentation (https://github.com/fivetran/dbt_fivetran_utils.git).
@@ -17,7 +19,7 @@ with source as (
 
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_salesforce__user_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('user')),
                 staging_columns=get_user_columns()
             )
         }}
@@ -33,8 +35,8 @@ with source as (
     from source
 
 ), renamed as (
-    
-    select 
+
+    select
 
         _fivetran_deleted,
         _fivetran_synced,
@@ -65,7 +67,7 @@ with source as (
         title,
         user_role_id,
         user_type,
-        username 
+        username
       --The below script allows for pass through columns.
 
         {% if var('user_pass_through_columns') %}
@@ -73,11 +75,11 @@ with source as (
         {{ var('user_pass_through_columns') | join (", ")}}
 
         {% endif %}
-    
+
     from macro
 
 )
 
-select * 
+select *
 from renamed
 where not coalesce(_fivetran_deleted, false)
