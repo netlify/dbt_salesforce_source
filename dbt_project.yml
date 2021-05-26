@@ -8,13 +8,13 @@ require-dbt-version: [">=0.18.0", "<0.20.0"]
 models:
   salesforce_source:
     tmp:
-      materialized: view
-    materialized: table
+      enabled: false
+    materialized: view
 
 vars:
   salesforce_source:
-    account: "{{ source('salesforce', 'account') }}" 
-    opportunity: "{{ source('salesforce', 'opportunity') }}" 
+    account: "{{ source('salesforce', 'account') }}"
+    opportunity: "{{ source('salesforce', 'opportunity') }}"
     user: "{{ source('salesforce', 'user') }}"
     user_role: "{{ source('salesforce', 'user_role') }}"
     account_pass_through_columns: []
